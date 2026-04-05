@@ -73,7 +73,7 @@ ENV PYTHONPATH="/app/env:$PYTHONPATH"
 
 # Health check
 HEALTHCHECK --interval=30s --timeout=3s --start-period=5s --retries=3 \
-    CMD curl -f http://localhost:8000/health || exit 1
+    CMD curl -f http://localhost:7860/health || exit 1
 
-# Run the FastAPI server — 2 workers for 2 vCPU, with proxy headers for HF Spaces
-CMD ["sh", "-c", "cd /app/env && uvicorn server.app:app --host 0.0.0.0 --port 8000 --workers 2 --proxy-headers --forwarded-allow-ips='*'"]
+# Run the FastAPI server — HF Spaces expects port 7860
+CMD ["sh", "-c", "cd /app/env && uvicorn server.app:app --host 0.0.0.0 --port 7860 --workers 2 --proxy-headers --forwarded-allow-ips='*'"]
