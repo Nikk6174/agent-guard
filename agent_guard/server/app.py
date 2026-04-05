@@ -50,6 +50,38 @@ app = create_app(
 )
 
 
+# ── Root & Health endpoints ─────────────────────────────────────────────
+
+from fastapi.responses import JSONResponse
+
+
+@app.get("/")
+async def root():
+    """Root endpoint — confirms the environment is live."""
+    return JSONResponse({
+        "name": "AgentGuard V3",
+        "description": "Adversarial Permission Governance Simulator",
+        "version": "3.0.0",
+        "status": "running",
+        "endpoints": {
+            "reset": "POST /reset",
+            "step": "POST /step",
+            "state": "GET /state",
+            "health": "GET /health",
+            "websocket": "WS /ws",
+        },
+        "scenarios": 13,
+        "reward_dimensions": ["decision_correctness", "investigation_quality",
+                              "reasoning_quality", "urgency_awareness"],
+    })
+
+
+@app.get("/health")
+async def health():
+    """Health check endpoint for Docker/HF Spaces."""
+    return JSONResponse({"status": "healthy"})
+
+
 def main(host: str = "0.0.0.0", port: int = 8000):
     """
     Entry point for direct execution via uv run or python -m.
