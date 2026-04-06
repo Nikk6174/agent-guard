@@ -79,6 +79,14 @@ except (ImportError, ModuleNotFoundError):
         from scenarios import SCENARIOS, SCENARIO_ORDER, MAX_PHASES_PER_EPISODE
 
 try:
+    from .scenario_generator import generate_variant
+except (ImportError, ModuleNotFoundError):
+    try:
+        from agent_guard.server.scenario_generator import generate_variant
+    except (ImportError, ModuleNotFoundError):
+        from scenario_generator import generate_variant
+
+try:
     from .reasoning_scorer import get_scorer
 except (ImportError, ModuleNotFoundError):
     try:
@@ -181,6 +189,7 @@ class AgentGuardEnvironment(Environment):
         *,
         scenario_id: Optional[str] = None,
         difficulty: Optional[str] = None,
+        seed: Optional[int] = None,
     ) -> AgentGuardObservation:
         """
         Reset the environment.
@@ -189,6 +198,10 @@ class AgentGuardEnvironment(Environment):
             scenario_id: Specific scenario ID to play. Overrides curriculum.
             difficulty: Difficulty tier filter ("easy", "medium", "hard").
                        Overrides auto-curriculum.
+            seed: If provided, generate a procedural variant of the selected
+                  scenario using this seed. Same seed = same variant
+                  (deterministic). Enables unlimited unique episodes for
+                  RL training at scale.
         """
         if scenario_id:
             task_id = scenario_id
@@ -202,8 +215,16 @@ class AgentGuardEnvironment(Environment):
             task_id = self._scenario_queue.pop(0)
 
         self._state = State(episode_id=str(uuid4()), step_count=0)
-        self._current_scenario = SCENARIOS[task_id]
-        self._current_task_id = task_id
+
+        # Procedural generation: seed transforms base scenario into variant
+        base_scenario = SCENARIOS[task_id]
+        if seed is not None:
+            self._current_scenario = generate_variant(base_scenario, seed)
+        else:
+            self._current_scenario = base_scenario
+
+        self._current_task_id = self._current_scenario["task_id"]
+        self._current_seed = seed
         self._current_phase_idx = 0
         self._revealed_layers = []
         self._investigation_depth = 0
@@ -475,6 +496,7 @@ class AgentGuardEnvironment(Environment):
             "metadata": {
                 "episode_id": self._state.episode_id,
                 "phase": self._current_phase_idx + 1,
+                "seed": getattr(self, '_current_seed', None),
             },
         }
 
