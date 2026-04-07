@@ -56,12 +56,12 @@ AgentGuard simulates a realistic enterprise DevOps environment where an RL agent
              ▼
 ┌─────────────────────────────────────────────────────────────────┐
 │  AgentGuard Environment                                         │
-│  ┌──────────────┐  ┌──────────────┐  ┌────────────────────┐    │
-│  │ 13 Templates  │  │ 4-Dimension  │  │ Multi-Phase State  │    │
-│  │ × ∞ Seeds     │  │ Composite    │  │ Machine with       │    │
-│  │ = Unlimited   │  │ Reward       │  │ Adversarial Agents │    │
-│  └──────────────┘  └──────────────┘  └────────────────────┘    │
-│                                                                  │
+│  ┌──────────────┐  ┌──────────────┐  ┌────────────────────┐     │
+│  │ 13 Templates │  │ 4-Dimension  │  │ Multi-Phase State  │     │
+│  │ × ∞ Seeds    │  │ Composite    │  │ Machine with       │     │
+│  │ = Unlimited  │  │ Reward       │  │ Adversarial Agents │     │
+│  └──────────────┘  └──────────────┘  └────────────────────┘     │
+│                                                                 │
 │  ┌──────────────────────────────────────────────────────────┐   │
 │  │ Curriculum: Easy → Medium → Hard (auto-adaptive)         │   │
 │  └──────────────────────────────────────────────────────────┘   │
