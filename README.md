@@ -2,7 +2,7 @@
 title: AgentGuard Space
 emoji: 🛡️
 colorFrom: blue
-colorTo: slate
+colorTo: indigo
 sdk: docker
 app_port: 7860
 ---
