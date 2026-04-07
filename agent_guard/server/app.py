@@ -55,9 +55,9 @@ app = create_app(
 from fastapi.responses import JSONResponse
 
 
-@app.get("/")
-async def root():
-    """Root endpoint — confirms the environment is live."""
+@app.get("/api/info")
+async def info():
+    """Info endpoint — confirms the environment is live."""
     return JSONResponse({
         "name": "AgentGuard V3",
         "description": "Adversarial Permission Governance Simulator",
@@ -81,6 +81,14 @@ async def health():
     """Health check endpoint for Docker/HF Spaces."""
     return JSONResponse({"status": "healthy"})
 
+
+try:
+    from .gradio_ui import build_ui
+except (ImportError, ModuleNotFoundError):
+    from server.gradio_ui import build_ui
+
+import gradio as gr
+app = gr.mount_gradio_app(app, build_ui(), path="/")
 
 def main(host: str = "0.0.0.0", port: int = 8000):
     """

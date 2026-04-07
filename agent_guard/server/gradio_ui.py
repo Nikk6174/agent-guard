@@ -257,7 +257,6 @@ def build_ui():
                             title="4-Dimension Reward Decomposition",
                             y_lim=[0, 0.55],
                             height=280,
-                            width=400,
                         )
                     with gr.Column():
                         gr.Markdown("### 📝 Action History")

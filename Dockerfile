@@ -24,8 +24,8 @@ RUN apt-get update && \
 ARG BUILD_MODE=in-repo
 ARG ENV_NAME=agent_guard
 
-# Copy environment code (always at root of build context)
-COPY . /app/env
+# Copy environment code from the agent_guard directory
+COPY agent_guard /app/env
 
 # For in-repo builds, openenv is already vendored in the build context
 # For standalone builds, openenv will be installed via pyproject.toml
