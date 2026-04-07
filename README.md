@@ -1,11 +1,3 @@
----
-title: AgentGuard Space
-emoji: 🛡️
-colorFrom: blue
-colorTo: indigo
-sdk: docker
-app_port: 7860
----
 # 🛡️ AgentGuard — Adversarial Permission Governance Simulator
 
 > **Meta OpenEnv Hackathon Submission** — An RL environment where AI agents learn to be Security Reviewers that detect deceptive, compromised, or honest autonomous agents requesting permissions in enterprise infrastructure.

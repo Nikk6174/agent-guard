@@ -51,9 +51,25 @@ jobs:
               ]
           )
           
+          # Dynamically add Hugging Face YAML frontmatter to the README for the Space
+          with open("README.md", "r") as f:
+              original_readme = f.read()
+              
+          hf_yaml = \"\"\"---
+title: AgentGuard Space
+emoji: 🛡️
+colorFrom: blue
+colorTo: indigo
+sdk: docker
+app_port: 7860
+---
+\"\"\"
+          with open("HF_README.md", "w") as f:
+              f.write(hf_yaml + original_readme)
+          
           # Upload deployment config
           api.upload_file(path_or_fileobj="Dockerfile", path_in_repo="Dockerfile", repo_id=repo_id, repo_type="space")
-          api.upload_file(path_or_fileobj="README.md", path_in_repo="README.md", repo_id=repo_id, repo_type="space")
+          api.upload_file(path_or_fileobj="HF_README.md", path_in_repo="README.md", repo_id=repo_id, repo_type="space")
           
           print("Deployment triggered successfully!")
           EOF

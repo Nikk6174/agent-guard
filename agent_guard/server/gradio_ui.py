@@ -192,7 +192,7 @@ def build_ui():
     hard = [s for s in SCENARIO_ORDER if SCENARIOS[s]["difficulty"] == "hard"]
 
     with gr.Blocks(
-        title="AgentGuard V3 — Adversarial Permission Governance",
+        title="AgentGuard — Adversarial Permission Governance",
         theme=gr.themes.Soft(
             primary_hue="blue",
             secondary_hue="slate",
@@ -205,7 +205,7 @@ def build_ui():
     ) as demo:
         gr.Markdown(
             """
-            # 🛡️ AgentGuard V3 — Adversarial Permission Governance Simulator
+            # 🛡️ AgentGuard — Adversarial Permission Governance Simulator
             **Meta OpenEnv Hackathon Submission** | 13 scenarios × 4-dimension rewards × Multi-phase adversarial
 
             Train RL agents to be Security Reviewers that detect deceptive, compromised, or honest autonomous agents

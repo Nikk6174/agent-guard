@@ -59,7 +59,7 @@ from fastapi.responses import JSONResponse
 async def info():
     """Info endpoint — confirms the environment is live."""
     return JSONResponse({
-        "name": "AgentGuard V3",
+        "name": "AgentGuard",
         "description": "Adversarial Permission Governance Simulator",
         "version": "3.0.0",
         "status": "running",
