@@ -41,6 +41,7 @@ jobs:
               folder_path=".",
               repo_id=repo_id,
               repo_type="space",
+              delete_patterns="*",
               ignore_patterns=[
                   ".git*",
                   ".github/*",
