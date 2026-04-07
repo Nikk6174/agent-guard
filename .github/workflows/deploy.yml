@@ -29,13 +29,13 @@ jobs:
           echo "Deploying selective files to Hugging Face Space..."
           
           # Upload only the agent_guard directory
-          huggingface-cli upload DeathGun44/agent-guard agent_guard/ . \
+          python -m huggingface_hub.cli upload DeathGun44/agent-guard agent_guard/ . \
             --repo-type space \
             --token $HF_TOKEN \
             --exclude "__pycache__/*" "*.pyc" "test_procedural.py" "inference.py" "inference_output.txt"
           
           # Upload the root config files (Dockerfile, README, etc)
-          huggingface-cli upload DeathGun44/agent-guard Dockerfile . --repo-type space --token $HF_TOKEN
-          huggingface-cli upload DeathGun44/agent-guard README.md . --repo-type space --token $HF_TOKEN
+          python -m huggingface_hub.cli upload DeathGun44/agent-guard Dockerfile . --repo-type space --token $HF_TOKEN
+          python -m huggingface_hub.cli upload DeathGun44/agent-guard README.md . --repo-type space --token $HF_TOKEN
           
           echo "Deployment triggered successfully!"
