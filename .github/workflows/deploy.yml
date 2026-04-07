@@ -41,6 +41,7 @@ jobs:
               folder_path="agent_guard",
               repo_id=repo_id,
               repo_type="space",
+              path_in_repo="agent_guard",
               ignore_patterns=[
                   "__pycache__/*", 
                   "*.pyc", 
