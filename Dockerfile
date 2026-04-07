@@ -25,7 +25,7 @@ ARG BUILD_MODE=in-repo
 ARG ENV_NAME=agent_guard
 
 # Copy environment code from the agent_guard directory
-COPY agent_guard /app/env
+COPY . /app/env
 
 # For in-repo builds, openenv is already vendored in the build context
 # For standalone builds, openenv will be installed via pyproject.toml

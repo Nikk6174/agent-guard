@@ -36,17 +36,21 @@ jobs:
           
           print(f"Uploading core files to {repo_id}...")
           
-          # Upload selectively
+          # Upload the entire repository mirror organically
           api.upload_folder(
-              folder_path="agent_guard",
+              folder_path=".",
               repo_id=repo_id,
               repo_type="space",
-              path_in_repo="agent_guard",
               ignore_patterns=[
+                  ".git*",
+                  ".github/*",
+                  "agent-guard-env/*",
                   "__pycache__/*", 
                   "*.pyc", 
+                  "deploy_hf.py",
+                  "README.md",
+                  "requirements.txt",
                   "test_procedural.py", 
-                  "inference.py", 
                   "inference_output.txt"
               ]
           )
@@ -69,8 +73,7 @@ jobs:
           with open("HF_README.md", "w") as f:
               f.write(hf_yaml + original_readme)
           
-          # Upload deployment config
-          api.upload_file(path_or_fileobj="Dockerfile", path_in_repo="Dockerfile", repo_id=repo_id, repo_type="space")
+          # Upload dynamically generated README config
           api.upload_file(path_or_fileobj="HF_README.md", path_in_repo="README.md", repo_id=repo_id, repo_type="space")
           
           print("Deployment triggered successfully!")
