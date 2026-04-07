@@ -77,6 +77,9 @@ jobs:
           # Upload dynamically generated README config
           api.upload_file(path_or_fileobj="HF_README.md", path_in_repo="README.md", repo_id=repo_id, repo_type="space")
           
+          # Force push uv.lock to bypass any hidden HF Hub ignore rules
+          api.upload_file(path_or_fileobj="uv.lock", path_in_repo="uv.lock", repo_id=repo_id, repo_type="space")
+          
           print("Deployment triggered successfully!")
           EOF
           
