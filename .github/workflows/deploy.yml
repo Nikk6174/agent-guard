@@ -55,7 +55,7 @@ jobs:
           with open("README.md", "r") as f:
               original_readme = f.read()
               
-          hf_yaml = \"\"\"---
+          hf_yaml = """---
 title: AgentGuard Space
 emoji: 🛡️
 colorFrom: blue
@@ -63,7 +63,7 @@ colorTo: indigo
 sdk: docker
 app_port: 7860
 ---
-\"\"\"
+"""
           with open("HF_README.md", "w") as f:
               f.write(hf_yaml + original_readme)
           
