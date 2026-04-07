@@ -4,7 +4,6 @@ on:
   push:
     branches:
       - main
-  # Allows you to run this workflow manually from the Actions tab
   workflow_dispatch:
 
 jobs:
@@ -19,23 +18,43 @@ jobs:
         with:
           python-version: "3.10"
 
-      - name: Install Hugging Face Hub CLI
+      - name: Install Hugging Face Hub
         run: pip install huggingface_hub
 
       - name: Deploy to Hugging Face
         env:
           HF_TOKEN: ${{ secrets.HF_TOKEN }}
         run: |
-          echo "Deploying selective files to Hugging Face Space..."
+          echo "Deploying selective files to Hugging Face Space using Python API..."
           
-          # Upload only the agent_guard directory
-          python -m huggingface_hub.cli upload DeathGun44/agent-guard agent_guard/ . \
-            --repo-type space \
-            --token $HF_TOKEN \
-            --exclude "__pycache__/*" "*.pyc" "test_procedural.py" "inference.py" "inference_output.txt"
+          cat << 'EOF' > deploy_hf.py
+          import os
+          from huggingface_hub import HfApi
           
-          # Upload the root config files (Dockerfile, README, etc)
-          python -m huggingface_hub.cli upload DeathGun44/agent-guard Dockerfile . --repo-type space --token $HF_TOKEN
-          python -m huggingface_hub.cli upload DeathGun44/agent-guard README.md . --repo-type space --token $HF_TOKEN
+          api = HfApi()
+          repo_id = "DeathGun44/agent-guard"
           
-          echo "Deployment triggered successfully!"
+          print(f"Uploading core files to {repo_id}...")
+          
+          # Upload selectively
+          api.upload_folder(
+              folder_path="agent_guard",
+              repo_id=repo_id,
+              repo_type="space",
+              ignore_patterns=[
+                  "__pycache__/*", 
+                  "*.pyc", 
+                  "test_procedural.py", 
+                  "inference.py", 
+                  "inference_output.txt"
+              ]
+          )
+          
+          # Upload deployment config
+          api.upload_file(path_or_fileobj="Dockerfile", path_in_repo="Dockerfile", repo_id=repo_id, repo_type="space")
+          api.upload_file(path_or_fileobj="README.md", path_in_repo="README.md", repo_id=repo_id, repo_type="space")
+          
+          print("Deployment triggered successfully!")
+          EOF
+          
+          python deploy_hf.py
