@@ -273,7 +273,21 @@ class AgentGuardEnvironment(Environment):
                     "STALLING",
                     "No more information available. Episode terminated."
                 )
-                return self._build_observation(feedback=fb, reward=0.0, done=True)
+                # Provide reward_breakdown even for stalling (Phase 2 validator
+                # may check all terminal states for a valid breakdown)
+                stall_score = 0.01
+                stall_breakdown = RewardBreakdown(
+                    decision_correctness=0.0,
+                    investigation_quality=0.0,
+                    reasoning_quality=0.0,
+                    urgency_awareness=0.0,
+                    total=stall_score,
+                    explanation="STALLING — exhausted all info without a decision. Score: 0.01",
+                )
+                return self._build_observation(
+                    feedback=fb, reward=stall_score, done=True,
+                    reward_breakdown=stall_breakdown,
+                )
 
         # ── APPROVE on a phase that continues → phase advance ──
         if decision == ActionType.APPROVE and phase.get("approve_continues", False):
@@ -323,11 +337,10 @@ class AgentGuardEnvironment(Environment):
             self._state.step_count, rubric.get("urgency", "MEDIUM")
         )
 
-        # Composite total
-        total = min(
-            decision_score + inv_score + reasoning_score + urgency_score,
-            1.0
-        )
+        # Composite total — clamped to open interval (0, 1)
+        # Hackathon validator requires scores strictly between 0 and 1
+        raw_total = decision_score + inv_score + reasoning_score + urgency_score
+        total = max(0.01, min(raw_total, 0.99))
 
         # Build explanation
         fb = phase.get("feedback", {}).get(action.decision.value, "")
@@ -613,8 +626,10 @@ if __name__ == "__main__":
     r = env3.step(AgentGuardAction(decision=ActionType.REQUEST_INFO, reasoning=""))
     r = env3.step(AgentGuardAction(decision=ActionType.REQUEST_INFO, reasoning=""))
     assert r.done is True
-    assert r.reward == 0.0
-    print(f"  Stalling episode terminates with reward=0.0")
+    assert r.reward == 0.01
+    assert r.reward_breakdown is not None  # Phase 2 requires breakdown on all terminals
+    assert r.reward_breakdown.total == 0.01
+    print(f"  Stalling episode terminates with reward=0.01, breakdown present")
     print("  ✓ Stalling correctly punished")
 
     # ── Test 4: Medium Hotfix — optimal ESCALATE ──
@@ -812,11 +827,17 @@ if __name__ == "__main__":
         + r.reward_breakdown.reasoning_quality
         + r.reward_breakdown.urgency_awareness
     )
-    assert abs(component_sum - r.reward_breakdown.total) < 0.001, (
-        f"Sum {component_sum} != total {r.reward_breakdown.total}"
+    # Total may be clamped to (0.01, 0.99) for hackathon validator compliance
+    clamped_sum = max(0.01, min(component_sum, 0.99))
+    assert abs(clamped_sum - r.reward_breakdown.total) < 0.001, (
+        f"Clamped sum {clamped_sum} != total {r.reward_breakdown.total}"
+    )
+    # Verify total is strictly in (0, 1)
+    assert 0.0 < r.reward_breakdown.total < 1.0, (
+        f"Total {r.reward_breakdown.total} is not in open interval (0, 1)"
     )
     print(f"  Components sum = {component_sum:.3f}, total = {r.reward_breakdown.total:.3f}")
-    print("  ✓ Reward breakdown is consistent")
+    print("  ✓ Reward breakdown is consistent (with clamping)")
 
     # ── Test 13: Curriculum — promotion and demotion ──
     print("\n--- Test 13: Curriculum logic ---")

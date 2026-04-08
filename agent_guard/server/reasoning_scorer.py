@@ -114,7 +114,8 @@ class LLMJudgeScorer:
         try:
             from openai import OpenAI
             api_base = os.getenv("API_BASE_URL", "https://router.huggingface.co/v1")
-            api_key = os.getenv("HF_TOKEN") or os.getenv("API_KEY", "")
+            # Prioritize API_KEY (validator proxy) over HF_TOKEN (personal)
+            api_key = os.getenv("API_KEY") or os.getenv("HF_TOKEN", "")
             self._client = OpenAI(base_url=api_base, api_key=api_key)
             self._model = os.getenv("MODEL_NAME", "Qwen/Qwen2.5-72B-Instruct")
         except Exception:
